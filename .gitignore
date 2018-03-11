@@ -1,0 +1,9 @@
+data
+.ipynb_checkpoints
+*.swp
+*.p
+lenet.*
+*.zip
+.idea/*
+*.iml
+training_images/*
