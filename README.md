@@ -201,12 +201,17 @@ Sliding-window detection is perfomed in the `get_hit_boxes` function in the `pro
 This function superimposes a sliding-window approach onto the same technique applied previously in training as follows:
 1. For each configured scale and image subset:
     1. Subset and scale input image
-    1. Generate HOG channel, histogram, and spatial channels
-    1. For each partially-overlapping step within an x/y range of the image subset:
-        1. Generate feature vector for applicable fractions of above channels
-        1. 
+    1. Generate spatial bin, color histogram, and HOG channels
+    1. For each partially-overlapping window within the image subset:
+        1. Generate and combine feature vectors for applicable fractions of above channels
+        1. Apply decision function to combined feature vector
+        1. If decision function result (classifier score) is greater than configured minimum, include in output 
 
-An early discovery in development was the poor cost/benefit performing detection   
+An early discovery in development was the poor cost/benefit performing channel (spatial bin, color histogram, HOG) generation per window vs the entire image. Applying this step to the entire image subset drastically improved performance with no loss in capability.
+ 
+Scales, image subsets, and overlap fraction were the result of guesswork followed by as much experimentation as the project timeline allowed.
+
+   
 
 ### 3.2 Show some examples of test images to demonstrate how your pipeline is working (...).
 

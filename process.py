@@ -170,29 +170,29 @@ def get_hit_boxes(input_image,
         for x_px in range(x_start, x_stop, x_step):
             for y_px in range(y_start, y_stop, y_step):
                 # Build cell
-                cell_start_x = int(x_px * px_per_cell * image_scale_x)
-                cell_end_x = cell_start_x + image_size[0]
-                cell_start_y = int(y_px * px_per_cell * image_scale_y)
-                cell_end_y = cell_start_y + image_size[1]
+                window_start_x = int(x_px * px_per_cell * image_scale_x)
+                window_end_x = window_start_x + image_size[0]
+                window_start_y = int(y_px * px_per_cell * image_scale_y)
+                window_end_y = window_start_y + image_size[1]
 
                 # Spatial feature vector
-                spatial_features = spatial_channels[cell_start_y:cell_end_y, cell_start_x:cell_end_x, :].ravel()
+                spatial_features = spatial_channels[window_start_y:window_end_y, window_start_x:window_end_x, :].ravel()
 
                 # Color feature vector
                 histogram_features = np.ravel(
-                    [histogram_channel[(y_px * px_per_cell), (x_px * px_per_cell), :].ravel()
-                     for histogram_channel in histogram_channels])
+                    [item[(y_px * px_per_cell), (x_px * px_per_cell), :].ravel()
+                     for item in histogram_channels])
 
                 # Hog feature vector
                 hog_features = np.ravel(
-                    [hog_channel_part[y_px:y_px + y_cells_per_window, x_px:x_px + x_cells_per_window].ravel()
-                     for hog_channel_part in hog_channels])
+                    [item[y_px:y_px + y_cells_per_window, x_px:x_px + x_cells_per_window].ravel()
+                     for item in hog_channels])
 
                 # Build window
-                window_start = (target_x[0] + int(x_px / scale * px_per_cell),
-                                target_y[0] + int(y_px / scale * px_per_cell))
-                window_end = (int(window_start[0] + hog_size[1] / scale),
-                              int(window_start[1] + hog_size[0] / scale))
+                window_ul = (target_x[0] + int(x_px / scale * px_per_cell),
+                             target_y[0] + int(y_px / scale * px_per_cell))
+                window_lr = (int(window_ul[0] + hog_size[1] / scale),
+                             int(window_ul[1] + hog_size[0] / scale))
 
                 # Vectorize all features
                 all_features = np.concatenate((spatial_features, histogram_features, hog_features))
@@ -202,7 +202,7 @@ def get_hit_boxes(input_image,
                 # Score & check
                 classifier_score = input_classifier.decision_function(all_features)
                 if classifier_score >= min_score:
-                    output_hits.append((window_start, window_end, scale ** 2))
+                    output_hits.append((window_ul, window_lr, scale ** 2))
 
         scale_ctr = scale_ctr + 1
 
