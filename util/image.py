@@ -95,13 +95,13 @@ def save_image(input_image,
             output_image)
 
 
-def get_image_histogram(input_image, nbins=32, bins_range=(0, 256)):
+def get_image_histogram(input_image, histogram_bins=32, bins_range=(0, 256)):
     """
     Builds image histogram.
     """
     return np.concatenate(
-        [np.histogram(input_image[:, :, channel], nbins, bins_range)[0]
-         for channel in range(input_image.shape[-1])]) / (input_image.shape[0] * input_image.shape[1])
+        [np.histogram(input_image[:, :, input_channel], histogram_bins, bins_range)[0]
+         for input_channel in range(input_image.shape[-1])]) / (input_image.shape[0] * input_image.shape[1])
 
 
 def resize_and_vectorize_image(input_image, output_size=(32, 32)):

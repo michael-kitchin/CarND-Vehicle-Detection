@@ -111,13 +111,28 @@ def get_hit_boxes(input_image,
         target_shape = (int(target_part.shape[1] * scale), int(target_part.shape[0] * scale))
         scaled_target = cv2.resize(target_part, target_shape)
 
-        # Getting HOG imagery at each scale, then windowing vs windows to HOG (faster!)
+        # Spatial channels
+        spatial_shape = (int(target_shape[0] * image_scale_y),
+                         int(target_shape[1] * image_scale_x))
+        spatial_channels = cv2.resize(scaled_target, spatial_shape)
+
+        # Histogram channels
+        histogram_channels = \
+            [windowed_histogram(
+                (scaled_target[:, :, histogram_channel] * 255.0 / 256.0 * histogram_bins).astype(np.uint8),
+                selem=np.ones(hog_size),
+                shift_x=-hog_size[1] // 2,
+                shift_y=-hog_size[0] // 2,
+                n_bins=histogram_bins)
+                for histogram_channel in range(scaled_target.shape[-1])]
+
+        # HOG channels
         if hog_channel == 'ALL':
             hog_channel_range = range(scaled_target.shape[-1])
         else:
             hog_channel_range = [hog_channel]
 
-        hog_parts = []
+        hog_channels = []
         for hog_channel_part in hog_channel_range:
             if output_base is None:
                 found_parts = \
@@ -139,23 +154,9 @@ def get_hit_boxes(input_image,
                                  input_color_space='GRAY',
                                  output_type='hog_{}_{}'.format(hog_channel_part, scale_ctr))
 
-            hog_parts.append(found_parts)
+            hog_channels.append(found_parts)
 
-        hog_shape = hog_parts[0].shape
-
-        # Similarly, histograms over whole scaled image
-        image_histogram = \
-            [windowed_histogram((scaled_target[:, :, channel] * 255.0 / 256.0 * histogram_bins).astype(np.uint8),
-                                selem=np.ones(hog_size),
-                                shift_x=-hog_size[1] // 2,
-                                shift_y=-hog_size[0] // 2,
-                                n_bins=histogram_bins)
-             for channel in range(scaled_target.shape[-1])]
-
-        #
-        scaled_shape = (int(target_shape[0] * image_scale_y),
-                        int(target_shape[1] * image_scale_x))
-        scaled_image = cv2.resize(scaled_target, scaled_shape)
+        hog_shape = hog_channels[0].shape
 
         # X/Y ranges for walking features
         x_start = 0
@@ -174,18 +175,18 @@ def get_hit_boxes(input_image,
                 cell_start_y = int(y_px * px_per_cell * image_scale_y)
                 cell_end_y = cell_start_y + image_size[1]
 
-                # Base image vector
-                image_features = scaled_image[cell_start_y:cell_end_y, cell_start_x:cell_end_x, :].ravel()
+                # Spatial feature vector
+                spatial_features = spatial_channels[cell_start_y:cell_end_y, cell_start_x:cell_end_x, :].ravel()
 
                 # Color feature vector
-                color_features = np.ravel(
-                    [histogram_bin[(y_px * px_per_cell), (x_px * px_per_cell), :].ravel()
-                     for histogram_bin in image_histogram])
+                histogram_features = np.ravel(
+                    [histogram_channel[(y_px * px_per_cell), (x_px * px_per_cell), :].ravel()
+                     for histogram_channel in histogram_channels])
 
                 # Hog feature vector
                 hog_features = np.ravel(
-                    [hog_part[y_px:y_px + y_cells_per_window, x_px:x_px + x_cells_per_window].ravel()
-                     for hog_part in hog_parts])
+                    [hog_channel_part[y_px:y_px + y_cells_per_window, x_px:x_px + x_cells_per_window].ravel()
+                     for hog_channel_part in hog_channels])
 
                 # Build window
                 window_start = (target_x[0] + int(x_px / scale * px_per_cell),
@@ -194,7 +195,7 @@ def get_hit_boxes(input_image,
                               int(window_start[1] + hog_size[0] / scale))
 
                 # Vectorize all features
-                all_features = np.concatenate((image_features, color_features, hog_features))
+                all_features = np.concatenate((spatial_features, histogram_features, hog_features))
                 all_features = all_features.reshape(1, -1)
                 all_features = input_scaler.transform(all_features)
 

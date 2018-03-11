@@ -164,9 +164,70 @@ See: GitHub [repo][this].
 
 _Explanation given for methods used to extract HOG features, including which color space was chosen, which HOG parameters (orientations, pixels_per_cell, cells_per_block), and why._
 
+Feature extraction is perfomed by the `extract_features` function in the `classifier.py` script and is based on project source material. This function combines input image, HOG channel, and color histogram data in feature vectors for training/verification. HOG channels have vastly greater representation in feature vectors, suggesting a dominant role in detection performance. Inclusion of input image data (spatial bins) in these vectors was a later addition but proved notably beneficial.   
+
+The following HOG parameter and color space defaults supplied in project source material proved sufficient for very high apparent accuracy (98+%):
+
+| Parameter | Value |
+|---------------------|---------|
+| Color Space | YCrCb |
+| Spatial Bins | 32 x 32 |
+| Histogram Bins | 32 |
+| HOG Orientations | 9 |
+| HOG Pixels Per Cell | 8 |
+| HOG Cells Per Block | 2 |
+| HOG Channel | All |
+
+Experimentation was performed with (e.g.) alternative color spaces without productive results.
+
 #### 2.2 Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 _The HOG features extracted from the training data have been used to train a classifier, could be SVM, Decision Tree or other. Features should be scaled to zero mean and unit variance before training the classifier._
 
+Classifier training is performed in the body of the `train_classifier.py` script. Classification is perfomed by a `LinearSVC` scaling by a `StandardScaler`.
+
+Training/verification was performed using both car and non-car images from project source material.  
+
 ---
 
+### 3. Sliding Window Search
+       
+### 3.1 Describe how (and identify where in your code) you implemented a sliding window search (...).
+
+_A sliding window approach has been implemented, where overlapping tiles in each test image are classified as vehicle or non-vehicle. Some justification has been given for the particular implementation chosen._
+
+Sliding-window detection is perfomed in the `get_hit_boxes` function in the `process.py` script.  
+
+This function superimposes a sliding-window approach onto the same technique applied previously in training as follows:
+1. For each configured scale and image subset:
+    1. Subset and scale input image
+    1. Generate HOG channel, histogram, and spatial channels
+    1. For each partially-overlapping step within an x/y range of the image subset:
+        1. Generate feature vector for applicable fractions of above channels
+        1. 
+
+An early discovery in development was the poor cost/benefit performing detection   
+
+### 3.2 Show some examples of test images to demonstrate how your pipeline is working (...).
+
+_Some discussion is given around how you improved the reliability of the classifier i.e., fewer false positives and more reliable car detections (this could be things like choice of feature vector, thresholding the decision function, hard negative mining etc.)_
+
+---
+
+### 4. Video Implementation
+    
+#### 4.1. Provide a link to your final video output. Your pipeline should perform reasonably well on the entire project video (...).
+
+_The sliding-window search plus classifier has been used to search for and identify vehicles in the videos provided. Video output has been generated with detected vehicle positions drawn (bounding boxes, circles, cubes, etc.) on each frame of video._
+
+#### 4.2 Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes (...).
+
+_A method, such as requiring that a detection be found at or near the same position in several subsequent frames, (could be a heat map showing the location of repeat detections) is implemented as a means of rejecting false positives, and this demonstrably reduces the number of false positives. Same or similar method used to draw bounding boxes (or circles, cubes, etc.) around high-confidence detections where multiple overlapping detections occur._
+
+---
+
+### 5. Discussion
+
+#### 5.1 Briefly discuss any problems / issues you faced in your implementation of this project (...).
+
+_Discussion includes some consideration of problems/issues faced, what could be improved about their algorithm/pipeline, and what hypothetical cases would cause their pipeline to fail._

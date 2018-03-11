@@ -23,7 +23,7 @@ def get_hog_features(input_image,
 def extract_features_from_images(image_file_paths,
                                  color_space='RGB',
                                  image_size=(32, 32),
-                                 histogram_bins=0,
+                                 histogram_bins=32,
                                  hog_orientation=9,
                                  hog_px_per_cell=8,
                                  hog_cell_per_blk=2,
@@ -42,7 +42,7 @@ def extract_features_from_images(image_file_paths,
 
 def extract_features(input_image,
                      image_size=(32, 32),
-                     hist_bins=0,
+                     histogram_bins=32,
                      hog_orientation=9,
                      hog_px_per_cell=8,
                      hog_cell_per_blk=2,
@@ -50,24 +50,22 @@ def extract_features(input_image,
     """
     Extracts features from an image.
     """
-    input_features = image.resize_and_vectorize_image(input_image, image_size)
-    color_features = []
-    if hist_bins > 0:
-        color_features = image.get_image_histogram(input_image * 255, hist_bins)
-    hog_parts = []
+    spatial_features = image.resize_and_vectorize_image(input_image, image_size)
+    histogram_features = image.get_image_histogram(input_image * 255, histogram_bins)
+
     if hog_channel == 'ALL':
-        for channel in range(input_image.shape[2]):
-            hog_parts.append(
-                get_hog_features(input_image[:, :, channel],
-                                 hog_orientation, hog_px_per_cell, hog_cell_per_blk,
-                                 visualize=False, feature_vector=True))
+        hog_channel_range = range(input_image.shape[-1])
     else:
-        hog_parts.append(
-            get_hog_features(input_image[:, :, hog_channel],
+        hog_channel_range = [hog_channel]
+
+    hog_channels = []
+    for hog_channel_part in hog_channel_range:
+        hog_channels.append(
+            get_hog_features(input_image[:, :, hog_channel_part],
                              hog_orientation, hog_px_per_cell, hog_cell_per_blk,
                              visualize=False, feature_vector=True))
 
-    features = np.concatenate((input_features, color_features, np.ravel(hog_parts)))
+    features = np.concatenate((spatial_features, histogram_features, np.ravel(hog_channels)))
     return features
 
 
