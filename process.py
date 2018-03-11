@@ -15,8 +15,6 @@ from util import image, classifier, running_mean
 imageio.plugins.ffmpeg.download()
 from moviepy.editor import VideoFileClip
 
-parser = argparse.ArgumentParser()
-
 # Default window scales
 default_window_scales = """[
     [0.5, 0.75, [0.0, 1.0], [0.5, 0.875]],
@@ -25,6 +23,8 @@ default_window_scales = """[
     [1.3333, 0.5, [0.0, 1.0], [0.5, 0.75]],
     [2.0, 0.0, [0.25, 0.75], [0.55, 0.64]]
 ]"""
+
+parser = argparse.ArgumentParser()
 
 # Input/output files
 parser.add_argument('--input-path', type=str, default='./project_video.mp4')
