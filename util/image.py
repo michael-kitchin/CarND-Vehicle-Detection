@@ -26,6 +26,8 @@ def load_image(input_file,
         output_image = input_image
     elif output_color_space == 'RGB':
         output_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2RGB)
+    elif output_color_space == 'GRAY':
+        output_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     elif output_color_space == 'HSV':
         output_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2HSV)
     elif output_color_space == 'LUV':
@@ -41,14 +43,20 @@ def load_image(input_file,
 
 def save_image(input_image,
                output_path,
+               output_type=None,
                input_color_space='RGB'):
     """
     Convert color space, de-normalize and save image.
     """
+    if input_image.dtype != np.uint8:
+        input_image = (input_image * 255).astype(np.uint8)
+
     if input_color_space == 'BGR':
         output_image = input_image
     elif input_color_space == 'RGB':
         output_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2BGR)
+    elif input_color_space == 'GRAY':
+        output_image = cv2.cvtColor(input_image, cv2.COLOR_GRAY2BGR)
     elif input_color_space == 'HSV':
         output_image = cv2.cvtColor(input_image, cv2.COLOR_HSV2BGR)
     elif input_color_space == 'LUV':
@@ -60,16 +68,31 @@ def save_image(input_image,
     else:
         raise IOError('invalid color_space: {}'.format(input_color_space))
 
-    if output_image.dtype != np.uint8:
-        output_image = (output_image * 255).astype(np.uint8)
-
     # Create directories
     output_dir = os.path.dirname(output_path)
+    output_name = os.path.basename(output_path)
+    output_base, output_ext = os.path.splitext(output_name)
+
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
 
     # Save files
-    cv2.imwrite(output_path, output_image)
+    if output_type is None:
+        cv2.imwrite(os.path.join(output_dir, '{}.png'.format(output_base)), output_image)
+    else:
+        type_dir = '{}/by_type/{}'.format(output_dir, output_type)
+        if not os.path.isdir(type_dir):
+            os.makedirs(type_dir)
+        name_dir = '{}/by_name/{}'.format(output_dir, output_base)
+        if not os.path.isdir(name_dir):
+            os.makedirs(name_dir)
+
+        cv2.imwrite(
+            os.path.join(type_dir, '{}_{}.png'.format(output_base, output_type)),
+            output_image)
+        cv2.imwrite(
+            os.path.join(name_dir, '{}_{}.png'.format(output_base, output_type)),
+            output_image)
 
 
 def get_image_histogram(input_image, nbins=32, bins_range=(0, 256)):
@@ -98,6 +121,8 @@ def convert_video_colorspace(input_frame,
 
     if output_color_space == 'RGB':
         output_frame = input_frame
+    elif output_color_space == 'GRAY':
+        output_frame = cv2.cvtColor(input_frame, cv2.COLOR_RGB2GRAY)
     elif output_color_space == 'BGR':
         output_frame = cv2.cvtColor(input_frame, cv2.COLOR_RGB2BGR)
     elif output_color_space == 'HSV':
@@ -119,7 +144,9 @@ def convert_image_to_rgb(input_image,
     """
     Convert image color space.
     """
-    if input_color_space == 'BGR':
+    if input_color_space == 'GRAY':
+        output_image = cv2.cvtColor(input_image, cv2.COLOR_GRAY2RGB)
+    elif input_color_space == 'BGR':
         output_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2RGB)
     elif input_color_space == 'HSV':
         output_image = cv2.cvtColor(input_image, cv2.COLOR_HSV2RGB)

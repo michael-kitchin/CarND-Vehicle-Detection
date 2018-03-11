@@ -7,3 +7,4 @@ lenet.*
 .idea/*
 *.iml
 training_images/*
+output_videos/**/*.png

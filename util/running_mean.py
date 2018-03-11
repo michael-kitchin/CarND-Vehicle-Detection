@@ -8,10 +8,10 @@ import numpy as np
 class RunningMean:
     def __init__(self,
                  max_size=10,
-                 max_prunes=100):
+                 recalc_interval=100):
         """Basic ctor"""
         self.max_size = max_size
-        self.max_prunes = max_prunes
+        self.recalc_interval = recalc_interval
         self.prune_ctr = 0
         self.cache = deque()
         self.sum = None
@@ -30,7 +30,7 @@ class RunningMean:
             self.sum = np.add(self.sum, new_value)
         if self.prune():
             self.prune_ctr += 1
-            if 0 < self.max_prunes < self.prune_ctr:
+            if 0 < self.recalc_interval < self.prune_ctr:
                 self.prune_ctr = 0
                 self.recalc()
         return self.build_mean()
