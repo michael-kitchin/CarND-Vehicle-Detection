@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser()
 # Input files
 parser.add_argument('--vehicle-image-path', type=str, default='./training_images/vehicles')
 parser.add_argument('--non-vehicle-image-path', type=str, default='./training_images/non-vehicles')
-parser.add_argument('--output-classifier-file', type=str, default='./classifier.p')
+parser.add_argument('--output-classifier-file', type=str, default='./classifier_data.p')
 
 # Other parameters
 parser.add_argument('--color-space', type=str, default='YCrCb')

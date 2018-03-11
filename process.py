@@ -19,17 +19,17 @@ parser = argparse.ArgumentParser()
 
 # Default window scales
 default_window_scales = """[
-    [2.0, 0.0, [0.25, 0.75], [0.55, 0.64]],
-    [1.3333, 0.5, [0.0, 1.0], [0.5, 0.75]],
-    [1.0, 0.5, [0.3333, 0.6666], [0.55, 0.9]],
+    [0.5, 0.75, [0.0, 1.0], [0.5, 0.875]],
     [0.5714, 0.75, [0.0, 1.0], [0.5, 0.875]],
-    [0.5, 0.75, [0.0, 1.0], [0.5, 0.875]]
+    [1.0, 0.5, [0.3333, 0.6666], [0.55, 0.9]],
+    [1.3333, 0.5, [0.0, 1.0], [0.5, 0.75]],
+    [2.0, 0.0, [0.25, 0.75], [0.55, 0.64]]
 ]"""
 
 # Input/output files
 parser.add_argument('--input-path', type=str, default='./project_video.mp4')
 parser.add_argument('--output-path', type=str, default='./output_images/project_video.mp4')
-parser.add_argument('--input-classifier-file', type=str, default='./classifier.p')
+parser.add_argument('--input-classifier-file', type=str, default='./classifier_data.p')
 
 # Input video range (optional)
 parser.add_argument('--input-video-range', type=str, default='[]')
@@ -38,7 +38,7 @@ parser.add_argument('--input-video-range', type=str, default='[]')
 parser.add_argument('--window-scales', type=str, default=default_window_scales)
 parser.add_argument('--window-min-score', type=float, default=1.5)
 parser.add_argument('--match-threshold', type=float, default=1.0)
-parser.add_argument('--match-min-size', type=str, default='[24,24]')
+parser.add_argument('--match-min-size', type=str, default='[16,16]')
 parser.add_argument('--match-average-frames', type=int, default=20)
 parser.add_argument('--match-average-prune', type=int, default=100)
 
@@ -78,7 +78,7 @@ hog_channel = classifier_args.hog_channel
 def get_image_hits(input_image,
                    hog_size=(64, 64),
                    px_per_cell=8,
-                   min_score=3.0,
+                   min_score=1.0,
                    scales=None):
     """
     Finds & vectorizes HOG features in supplied image.
@@ -173,7 +173,7 @@ def get_image_hits(input_image,
 
                 # Score & check
                 classifier_score = input_classifier.decision_function(all_features)
-                if classifier_score > min_score:
+                if classifier_score >= min_score:
                     output_hits.append((window_start, window_end, scale ** 2))
 
     return output_hits
@@ -183,10 +183,10 @@ def process_image(input_image,
                   mean_heatmap=None,
                   hog_size=(64, 64),
                   px_per_cell=8,
-                  min_score=3.0,
+                  min_score=1.0,
                   scales=None,
                   threshold=1.0,
-                  min_size=(24, 24)):
+                  min_size=(16, 16)):
     """
     Finds and marks matching objects in supplied image.
     """
