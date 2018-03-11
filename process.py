@@ -115,31 +115,49 @@ def get_hit_boxes(input_image,
         hog_parts = []
         if hog_channel == 'ALL':
             for channel in range(scaled_target.shape[-1]):
+                if output_base is None:
+                    found_parts = \
+                        classifier.get_hog_features(scaled_target[:, :, channel],
+                                                    orientation=hog_orientation,
+                                                    px_per_cell=hog_px_per_cell,
+                                                    cell_per_blk=hog_cell_per_blk,
+                                                    feature_vector=False,
+                                                    visualize=False)
+                else:
+                    (found_parts, hog_image) = \
+                        classifier.get_hog_features(scaled_target[:, :, channel],
+                                                    orientation=hog_orientation,
+                                                    px_per_cell=hog_px_per_cell,
+                                                    cell_per_blk=hog_cell_per_blk,
+                                                    feature_vector=False,
+                                                    visualize=True)
+                    image.save_image(hog_image * 255, output_base,
+                                     input_color_space='GRAY',
+                                     output_type='hog_{}_{}'.format(hog_channel.lower(), scale_ctr))
+                    
+                hog_parts.append(found_parts)
+        else:
+            if output_base is None:
+                found_parts = \
+                    classifier.get_hog_features(scaled_target[:, :, hog_channel],
+                                                orientation=hog_orientation,
+                                                px_per_cell=hog_px_per_cell,
+                                                cell_per_blk=hog_cell_per_blk,
+                                                feature_vector=False,
+                                                visualize=False)
+            else:
                 (found_parts, hog_image) = \
-                    classifier.get_hog_features(scaled_target[:, :, channel],
+                    classifier.get_hog_features(scaled_target[:, :, hog_channel],
                                                 orientation=hog_orientation,
                                                 px_per_cell=hog_px_per_cell,
                                                 cell_per_blk=hog_cell_per_blk,
                                                 feature_vector=False,
                                                 visualize=True)
-                hog_parts.append(found_parts)
-                if not output_base is None:
-                    image.save_image(hog_image*255, output_base,
-                                     input_color_space='GRAY',
-                                     output_type='hog_{}_{}'.format(hog_channel.lower(), scale_ctr))
-        else:
-            (found_parts, hog_image) = \
-                classifier.get_hog_features(scaled_target[:, :, hog_channel],
-                                            orientation=hog_orientation,
-                                            px_per_cell=hog_px_per_cell,
-                                            cell_per_blk=hog_cell_per_blk,
-                                            feature_vector=False,
-                                            visualize=True)
-            hog_parts.append(found_parts)
-            if not output_base is None:
-                image.save_image(hog_image*255, output_base,
+                image.save_image(hog_image * 255, output_base,
                                  input_color_space='GRAY',
                                  output_type='hog_{}_{}'.format(hog_channel, scale_ctr))
+
+            hog_parts.append(found_parts)
 
         hog_shape = hog_parts[0].shape
 

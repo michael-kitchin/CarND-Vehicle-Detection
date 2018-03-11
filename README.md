@@ -7,7 +7,7 @@
 The goals / steps of this project are the following:
 
 * Perform Histogram of Oriented Gradients (HOG) feature extraction on a labeled training set of images to train a Linear SVM classifier.
-* Use your trained classifier coupled with a sliding-window technique to search for vehicles in images.
+* Use a trained classifier coupled with a sliding-window technique to search for vehicles in images/videos.
 * Run this pipeline on a video stream to create heat maps (integrations) of recurring detections for outlier rejection and vehicle following.
 * Estimate and render bounding boxes for vehicles detected.
 
@@ -140,3 +140,33 @@ Loading ./test_images\test6.jpg (image)...
 Detecting vehicles...
 Vehicles detected: [((800, 360), (959, 519)), ((1000, 376), (1215, 535))]
 ```
+---
+
+## Rubric Points
+
+### [Rubric Points](https://review.udacity.com/#!/rubrics/513/view) are discussed individually with respect to the implementation.
+
+---
+
+### 1. Writeup / README
+
+#### 1.1 Provide a Writeup / README that includes all the rubric points and how you addressed each one (...).
+
+_The writeup / README should include a statement and supporting figures / images that explain how each rubric item was addressed, and specifically where in the code each step was handled._
+
+See: GitHub [repo][this].
+
+---
+
+### 2. Histogram of Oriented Gradients (HOG)
+       
+#### 2.1 Explain how (and identify where in your code) you extracted HOG features from the training images (...).
+
+_Explanation given for methods used to extract HOG features, including which color space was chosen, which HOG parameters (orientations, pixels_per_cell, cells_per_block), and why._
+
+#### 2.2 Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
+
+_The HOG features extracted from the training data have been used to train a classifier, could be SVM, Decision Tree or other. Features should be scaled to zero mean and unit variance before training the classifier._
+
+---
+
