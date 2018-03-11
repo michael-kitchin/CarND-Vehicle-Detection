@@ -17,18 +17,18 @@ from moviepy.editor import VideoFileClip
 
 # Default window scales
 default_window_scales = """[
-    [0.5, 0.75, [0.0, 1.0], [0.5, 0.875]],
-    [0.5714, 0.75, [0.0, 1.0], [0.5, 0.875]],
+    [0.5, 0.75, [0.0, 1.0], [0.5, 0.9]],
+    [0.6, 0.75, [0.0, 1.0], [0.5, 0.9]],
     [1.0, 0.5, [0.3333, 0.6666], [0.55, 0.9]],
     [1.3333, 0.5, [0.0, 1.0], [0.5, 0.75]],
-    [2.0, 0.0, [0.25, 0.75], [0.55, 0.64]]
+    [2.0, 0.0, [0.25, 0.75], [0.55, 0.65]]
 ]"""
 
 parser = argparse.ArgumentParser()
 
 # Input/output files
-parser.add_argument('--input-path', type=str, default='./project_video.mp4')
-parser.add_argument('--output-dir', type=str, default='./output_images/project_video.mp4')
+parser.add_argument('--input-path', type=str, default='./*.mp4')
+parser.add_argument('--output-dir', type=str, default='./output_videos')
 parser.add_argument('--input-classifier-file', type=str, default='./classifier_data.p')
 
 # Input video range (optional)

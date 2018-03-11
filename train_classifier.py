@@ -17,6 +17,7 @@ parser.add_argument('--non-vehicle-image-path', type=str, default='./training_im
 parser.add_argument('--output-classifier-file', type=str, default='./classifier_data.p')
 
 # Other parameters
+parser.add_argument('--test-fraction', type=float, default=0.2)
 parser.add_argument('--color-space', type=str, default='YCrCb')
 parser.add_argument('--image-size', type=str, default='[32,32]')
 parser.add_argument('--histogram-bins', type=int, default=32)
@@ -33,6 +34,7 @@ print('Args: {}'.format(args))
 vehicle_image_path = args.vehicle_image_path
 non_vehicle_image_path = args.non_vehicle_image_path
 output_classifier_file = args.output_classifier_file
+test_fraction = args.test_fraction
 color_space = args.color_space
 image_size = tuple(json.loads(args.image_size))
 hog_size = tuple(json.loads(args.hog_size))
@@ -71,9 +73,9 @@ non_vehicle_features = classifier.extract_features_from_images(
     hog_channel=hog_channel)
 print('...{} non-vehicle features extracted.'.format(len(non_vehicle_features)))
 
-X = np.vstack((vehicle_features, non_vehicle_features)).astype(np.float64)
-y = np.hstack((np.ones(len(vehicle_features)), np.zeros(len(non_vehicle_features))))
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_input = np.vstack((vehicle_features, non_vehicle_features)).astype(np.float64)
+y_input = np.hstack((np.ones(len(vehicle_features)), np.zeros(len(non_vehicle_features))))
+X_train, X_test, y_train, y_test = train_test_split(X_input, y_input, test_size=test_fraction)
 
 output_scaler = StandardScaler().fit(X_train)
 X_train = output_scaler.transform(X_train)
@@ -88,6 +90,7 @@ pos_results = y_test.nonzero()
 neg_results = np.logical_not(y_test).nonzero()
 true_pos_score = output_classifier.score(X_test[pos_results], y_test[pos_results])
 true_neg_score = output_classifier.score(X_test[neg_results], y_test[neg_results])
+
 print(' True/Positive: {:.1f}%'.format(100.0 * true_pos_score))
 print('False/Positive: {:.1f}%'.format(100.0 * (1.0 - true_neg_score)))
 print(' True/Negative: {:.1f}%'.format(100.0 * true_neg_score))
