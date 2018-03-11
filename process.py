@@ -112,34 +112,16 @@ def get_hit_boxes(input_image,
         scaled_target = cv2.resize(target_part, target_shape)
 
         # Getting HOG imagery at each scale, then windowing vs windows to HOG (faster!)
-        hog_parts = []
         if hog_channel == 'ALL':
-            for channel in range(scaled_target.shape[-1]):
-                if output_base is None:
-                    found_parts = \
-                        classifier.get_hog_features(scaled_target[:, :, channel],
-                                                    orientation=hog_orientation,
-                                                    px_per_cell=hog_px_per_cell,
-                                                    cell_per_blk=hog_cell_per_blk,
-                                                    feature_vector=False,
-                                                    visualize=False)
-                else:
-                    (found_parts, hog_image) = \
-                        classifier.get_hog_features(scaled_target[:, :, channel],
-                                                    orientation=hog_orientation,
-                                                    px_per_cell=hog_px_per_cell,
-                                                    cell_per_blk=hog_cell_per_blk,
-                                                    feature_vector=False,
-                                                    visualize=True)
-                    image.save_image(hog_image * 255, output_base,
-                                     input_color_space='GRAY',
-                                     output_type='hog_{}_{}'.format(hog_channel.lower(), scale_ctr))
-                    
-                hog_parts.append(found_parts)
+            hog_channel_range = range(scaled_target.shape[-1])
         else:
+            hog_channel_range = [hog_channel]
+
+        hog_parts = []
+        for hog_channel_part in hog_channel_range:
             if output_base is None:
                 found_parts = \
-                    classifier.get_hog_features(scaled_target[:, :, hog_channel],
+                    classifier.get_hog_features(scaled_target[:, :, hog_channel_part],
                                                 orientation=hog_orientation,
                                                 px_per_cell=hog_px_per_cell,
                                                 cell_per_blk=hog_cell_per_blk,
@@ -147,15 +129,15 @@ def get_hit_boxes(input_image,
                                                 visualize=False)
             else:
                 (found_parts, hog_image) = \
-                    classifier.get_hog_features(scaled_target[:, :, hog_channel],
+                    classifier.get_hog_features(scaled_target[:, :, hog_channel_part],
                                                 orientation=hog_orientation,
                                                 px_per_cell=hog_px_per_cell,
                                                 cell_per_blk=hog_cell_per_blk,
                                                 feature_vector=False,
                                                 visualize=True)
-                image.save_image(hog_image * 255, output_base,
+                image.save_image(hog_image * 100, output_base,
                                  input_color_space='GRAY',
-                                 output_type='hog_{}_{}'.format(hog_channel, scale_ctr))
+                                 output_type='hog_{}_{}'.format(hog_channel_part, scale_ctr))
 
             hog_parts.append(found_parts)
 
