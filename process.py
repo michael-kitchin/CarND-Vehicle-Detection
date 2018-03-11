@@ -72,7 +72,12 @@ histogram_bins = classifier_args.histogram_bins
 hog_orientation = classifier_args.hog_orientation
 hog_px_per_cell = classifier_args.hog_px_per_cell
 hog_cell_per_blk = classifier_args.hog_cell_per_blk
-hog_channel = classifier_args.hog_channel
+
+# May be 'ALL', 'NONE', or integer
+try:
+    hog_channel = int(classifier_args.hog_channel)
+except ValueError:
+    hog_channel = classifier_args.hog_channel
 
 
 def get_image_hits(input_image,
