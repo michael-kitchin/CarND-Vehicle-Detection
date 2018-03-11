@@ -18,9 +18,9 @@ parser.add_argument('--output-classifier-file', type=str, default='./classifier_
 
 # Other parameters
 parser.add_argument('--color-space', type=str, default='YCrCb')
-parser.add_argument('--image-size', type=str, default='[32, 32]')
+parser.add_argument('--image-size', type=str, default='[32,32]')
 parser.add_argument('--histogram-bins', type=int, default=32)
-parser.add_argument('--hog-size', type=str, default='[64, 64]')
+parser.add_argument('--hog-size', type=str, default='[64,64]')
 parser.add_argument('--hog-orientation', type=int, default=9)
 parser.add_argument('--hog-px-per-cell', type=int, default=8)
 parser.add_argument('--hog-cell-per-blk', type=int, default=2)
