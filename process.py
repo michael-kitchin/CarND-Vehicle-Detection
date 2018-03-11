@@ -272,4 +272,4 @@ for input_file in glob.glob(input_path):
         video_clip.write_videofile(output_file, audio=False)
         print('...{} (video) saved.'.format(output_file))
     else:
-        raise Exception('Unidentified file extension ' + file_extension)
+        raise IOError('invalid file extensoin: {}' + file_extension)
