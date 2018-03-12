@@ -180,6 +180,17 @@ The following HOG parameter and color space defaults supplied in project source 
 
 Experimentation was performed with (e.g.) alternative color spaces without productive results.
 
+The luminance channel (Y) vs chrominance (Cr, Cb) was observed to be particularly useful for brighter, more-distant detections, as shown:
+
+Hog vs luminance (Y): 
+![test #3 (Y)](./media/test3_hog_0_4.png)
+
+Hog vs chrominance (Cr):
+![test #3 (Cr)](./media/test3_hog_1_4.png)
+
+Hog vs chrominance (Cb):
+![test #3 (Cb)](./media/test3_hog_2_4.png)
+
 #### 2.2 Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
 _The HOG features extracted from the training data have been used to train a classifier, could be SVM, Decision Tree or other. Features should be scaled to zero mean and unit variance before training the classifier._
@@ -209,13 +220,73 @@ This function superimposes a sliding-window approach onto the same technique app
 
 An early discovery in development was the poor cost/benefit performing channel (spatial bin, color histogram, HOG) generation per window vs the entire image. Applying this step to the entire image subset drastically improved performance with no loss in capability.
  
-Scales, image subsets, and overlap fraction were the result of guesswork followed by as much experimentation as the project timeline allowed.
+Scales, image subsets, and overlap fraction were derived from project source material, guesswork, and as much experimentation as the project timeline allowed.
 
-   
+In particularly, cars in the mid-vertical and horizontal periphery of the search area proved difficult to detect (e.g., test image #3). Additional scales and fractions were added until there was usable detection improvement at the cost of many window steps and a notable increase in processing time (average ~2.9sec/frame).
+
+The final configuration is as follows:
+
+| Window Size (vs HOG size) | Overlap | Search Area (Fractions) |
+|-------------|---------|------------|
+| 32x32 (0.5x) | 0.0 | x=0.0-1.0 y=0.5-0.9 |
+| 48x48 (0.6x)| 0.5 | x=0.0-1.0 y=0.5-0.9 |
+| 64x64 (1x) | 0.5 | x=0.3-0.6 y=0.5-0.9 |
+| 112x112 (1.3x) | 0.75 | x=0.0-1.0 y=0.5-0.75 |
+| 128x128 (2x) | 0.75 | x=0.25-0.75 y=0.5-0.65 |
+
 
 ### 3.2 Show some examples of test images to demonstrate how your pipeline is working (...).
 
 _Some discussion is given around how you improved the reliability of the classifier i.e., fewer false positives and more reliable car detections (this could be things like choice of feature vector, thresholding the decision function, hard negative mining etc.)_
+
+Classifier optimization followed suggestions from project source material and past experience.
+
+For image and video processing:
+* Training on both car and non-car images, split into randomly-allocated training and validation sets
+* Filtering detections by only including those above configured minimum decision function result (classifier score)
+* Summing detections in a heatmap to accomplish the following:
+    * Aggregating detection boxes into larger areas
+    * Filtering overall results by only including heatmap sums above configured minimum threshold (binary map)
+        
+For video processing, specifically:
+* Heatmap sums are averaged over multiple frames to minimize transient effects (e.g., passing shadows, pavement changes)    
+
+Iterim product images were stored for each test image as development aids, as shown:
+
+Test image #4 (input):
+![Test image #4](./output_images/by_name/test4/test4_input.png)
+
+Test image #4 (detections):
+![Test image #4](./output_images/by_name/test4/test4_boxes.png)
+
+Test image #4 (HOG luminance (y), scale 4):
+![Test image #4](./output_images/by_name/test4/test4_hog_0_4.png)
+
+Test image #4 (heat map):
+![Test image #4](./output_images/by_name/test4/test4_heat_map.png)
+
+Test image #4 (binary map):
+![Test image #4](./output_images/by_name/test4/test4_binary_map.png)
+
+Test image #4 (output; two cars, two detections; transitional shade/pavement):
+![Test image #4](./output_images/by_type/output/test4_output.png)
+
+Other test image output:
+
+Test image #1 (two cars, two detections; bright sun, asphalt):
+![Test image #1](./output_images/by_type/output/test1_output.png)
+
+Test image #2 (no cars, no detections; bright sun, asphalt):
+![Test image #2](./output_images/by_type/output/test2_output.png)
+
+Test image #3 (one car, one detection; bright sun, asphalt):
+![Test image #3](./output_images/by_type/output/test3_output.png)
+
+Test image #5 (two cars, two detections; transitional shade, concrete overpass):
+![Test image #5](./output_images/by_type/output/test5_output.png)
+
+Test image #6 (two cars, two detections; transitional shade/pavement):
+![Test image #6](./output_images/by_type/output/test6_output.png)
 
 ---
 
@@ -225,9 +296,21 @@ _Some discussion is given around how you improved the reliability of the classif
 
 _The sliding-window search plus classifier has been used to search for and identify vehicles in the videos provided. Video output has been generated with detected vehicle positions drawn (bounding boxes, circles, cubes, etc.) on each frame of video._
 
+See [Project Video #1](./output_videos/project_video.mp4) for final project video.
+
+See [Test Video #1](./output_videos/test_video.mp4) for project test video.
+
 #### 4.2 Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes (...).
 
 _A method, such as requiring that a detection be found at or near the same position in several subsequent frames, (could be a heat map showing the location of repeat detections) is implemented as a means of rejecting false positives, and this demonstrably reduces the number of false positives. Same or similar method used to draw bounding boxes (or circles, cubes, etc.) around high-confidence detections where multiple overlapping detections occur._
+
+Heat map generation and averaging is perfomed in the `process_image` function in the `process.py` script. Averaging is performed in the `RunningMean` class in the `running_mean.py` script, a general-purpose running (windowed) mean mean capability for NumPy arrays.
+
+Heat maps are used to aggregate high-confidence areas, then are averaged from frame to frame to minimize transient effects (e.g., passing shadows, pavement changes).  
+
+Once heat maps are generated they are reduced to binary maps, then labled using the `scipy.ndimage.measurements.label` function. The bounds of these labels are the basis for boxes drawn over detections in output video frames.
+
+This coupled with the filtering techniques described in (3.2) minimize false positives from spurious detections while sustaining likely ongoing/previous detections.
 
 ---
 
@@ -236,3 +319,14 @@ _A method, such as requiring that a detection be found at or near the same posit
 #### 5.1 Briefly discuss any problems / issues you faced in your implementation of this project (...).
 
 _Discussion includes some consideration of problems/issues faced, what could be improved about their algorithm/pipeline, and what hypothetical cases would cause their pipeline to fail._
+
+This capabiliy requires considerable processing power applied during training and execution to achieve usable detection performance, to the point it may be impractical to implement in applications without commensurate optimization of underling algorithms (e.g., pre-filtering, convolution) and implementations (e.g., re-implementation in lower-level programming systems). 
+
+This prospect suggests a such a capability may not be conveniently and interactively designed (as we have done) to coerce and aggregate this type/fidelity of input into actionable information. 
+
+Other projects in this program illustrate that developers may be better off abstracting this functionality using neural networks, effectively enabling applications to generate optimal processing pipelines (or meaningful portions thereof).
+
+The correct approach comes down to selecting the right tool for the job. In the case of this project, for example processing power/execution time isn't a pressing concern and there are many unexplored input management and processing scope opportunities yet to be considered.
+
+Either way, scikit-learn, Keras, TensorFlow, and NumPy (to name a few) have been incredible tools to learn and use for these projects and I look forward to leveraging them extensively in the future.
+  

@@ -7,7 +7,7 @@ import pickle
 import cv2
 import imageio
 import numpy as np
-from scipy.ndimage.measurements import label as label_image
+from scipy.ndimage.measurements import label as label_matches
 from skimage.filters.rank import windowed_histogram
 
 from util import image, classifier, running_mean
@@ -19,9 +19,9 @@ from moviepy.editor import VideoFileClip
 default_window_scales = """[
     [0.5, 0.75, [0.0, 1.0], [0.5, 0.9]],
     [0.6, 0.75, [0.0, 1.0], [0.5, 0.9]],
-    [1.0, 0.5, [0.3333, 0.6666], [0.55, 0.9]],
+    [1.0, 0.5, [0.3333, 0.6666], [0.5, 0.9]],
     [1.3333, 0.5, [0.0, 1.0], [0.5, 0.75]],
-    [2.0, 0.0, [0.25, 0.75], [0.55, 0.65]]
+    [2.0, 0.0, [0.25, 0.75], [0.5, 0.65]]
 ]"""
 
 parser = argparse.ArgumentParser()
@@ -233,7 +233,7 @@ def process_image(input_image,
         heat_map = mean_heatmap.update_mean(heat_map)
 
     binary_map = heat_map >= threshold
-    labels = label_image(binary_map)
+    labels = label_matches(binary_map)
 
     if not output_base is None:
         image.save_image(classifier.draw_boxes(input_image, hit_boxes), output_base,
