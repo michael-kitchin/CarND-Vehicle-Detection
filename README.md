@@ -326,7 +326,7 @@ This prospect suggests a such a capability may not be conveniently and interacti
 
 Other projects in this program illustrate that developers may be better off abstracting this functionality using neural networks, effectively enabling applications to generate optimal processing pipelines (or meaningful portions thereof).
 
-The correct approach comes down to selecting the right tool for the job. In the case of this project, for example processing power/execution time isn't a pressing concern and there are many unexplored input and scope opportunities yet to be considered.
+The correct approach comes down to selecting the right tool for the job. In the case of this project, for example processing power/execution time isn't a pressing concern and there are many unexplored input management and execution scope opportunities yet to be considered.
 
 Either way, scikit-learn, Keras, TensorFlow, and NumPy (to name a few) have been incredible tools to learn and use for these projects and I look forward to leveraging them extensively in the future.
   
