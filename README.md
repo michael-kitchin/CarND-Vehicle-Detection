@@ -98,10 +98,10 @@ Supported arguments (defaults are observed, best values):
 | `--input-video-range` | Start/stop subset of input video to process (in seconds). | `[]`=full video, `[x,y]`=(x) to (y) |
 | `--window-scales` | Scales and image fractions for HOG feature extraction. | (see below) |
 | `--window-min-score` | Minimum decision function score for inclusion.| `1.5` |
-| `--match-threshold` | Minimum averaged heatmap score for inclusion. | `1.0` |
+| `--match-threshold` | Minimum averaged heat map score for inclusion. | `1.0` |
 | `--match-min-size` | Minimum detected feature size for inclusion (in pixels). | `[16,16]` |
-| `--match-average-frames` | Number of frame heatmaps to average. | `20` |
-| `--match-average-recalc` | Frame interval to recalc average heatmap. | `100` |
+| `--match-average-frames` | Number of frame heat maps to average. | `20` |
+| `--match-average-recalc` | Frame interval to recalc average heat map. | `100` |
 | `--video-frame-save-interval` | Frame interval to save interim images. | `40` |
 
 Example execution (Windows, w/in JetBrains IntelliJ):
@@ -244,12 +244,12 @@ Classifier optimization followed suggestions from project source material and pa
 For image and video processing:
 * Training on both car and non-car images, split into randomly-allocated training and validation sets
 * Filtering detections by only including those above configured minimum decision function result (classifier score)
-* Summing detections in a heatmap to accomplish the following:
+* Summing detections in a heat map to accomplish the following:
     * Aggregating detection boxes into larger areas
-    * Filtering overall results by only including heatmap sums above configured minimum threshold (binary map)
+    * Filtering overall results by only including heat map sums above configured minimum threshold (binary map)
         
 For video processing, specifically:
-* Heatmap sums are averaged over multiple frames to minimize transient effects (e.g., passing shadows, pavement changes)    
+* Heat map sums are averaged over multiple frames to minimize transient effects (e.g., passing shadows, pavement changes)    
 
 Iterim product images were stored for each test image as development aids, as shown:
 
@@ -306,11 +306,11 @@ _A method, such as requiring that a detection be found at or near the same posit
 
 Heat map generation and averaging is perfomed in the `process_image` function in the `process.py` script. Averaging is performed in the `RunningMean` class in the `running_mean.py` script, a general-purpose running (windowed) mean capability for NumPy arrays.
 
-Heat maps are used to aggregate high-confidence areas, then are averaged from frame to frame to minimize transient effects (e.g., passing shadows, pavement changes).  
+Heat maps are used to aggregate high-confidence areas, then are averaged from frame to frame to minimize transient effects (e.g., passing shadows, pavement changes).
 
 Once heat maps are generated they are reduced to binary maps, then labled using the `scipy.ndimage.measurements.label` function. The bounds of these labels are the basis for boxes drawn over detections in output video frames.
 
-This coupled with the filtering techniques described in (3.2) minimize false positives from spurious detections while sustaining likely ongoing/previous detections.
+This coupled with the filtering techniques described in (3.1) minimize false positives from spurious detections while sustaining likely ongoing/previous detections.
 
 ---
 
