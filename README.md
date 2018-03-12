@@ -310,7 +310,7 @@ Heat maps are used to aggregate high-confidence areas, then are averaged from fr
 
 Once heat maps are generated they are reduced to binary maps, then labled using the `scipy.ndimage.measurements.label` function. The bounds of these labels are the basis for boxes drawn over detections in output video frames.
 
-This coupled with the filtering techniques described in (3.1) minimize false positives from spurious detections while sustaining likely ongoing/previous detections.
+This coupled with the filtering techniques described in (3.1) and (3.2), above minimize false positives from spurious detections while sustaining likely ongoing/previous detections.
 
 ---
 
