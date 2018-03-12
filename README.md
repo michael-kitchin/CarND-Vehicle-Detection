@@ -164,7 +164,7 @@ See: GitHub [repo][this].
 
 _Explanation given for methods used to extract HOG features, including which color space was chosen, which HOG parameters (orientations, pixels_per_cell, cells_per_block), and why._
 
-Feature extraction is perfomed by the `extract_features` function in the `classifier.py` script and is based on project source material. This function combines input image, HOG channel, and color histogram data in feature vectors for training/verification. HOG channels have vastly greater representation in feature vectors, suggesting a dominant role in detection performance. Inclusion of input image data (spatial bins) in these vectors was a later addition but proved notably beneficial.   
+Feature extraction is perfomed by the `extract_features` function in the `classifier.py` script and is based on project source material. This function combines spatial bin (scaled input), color histogram, and HOG channels in feature vectors for training/verification. HOG channels have vastly greater representation in feature vectors, suggesting a dominant role in detection performance. Inclusion of input image data (spatial bins) in these vectors was a later addition but proved notably beneficial.   
 
 The following HOG parameter and color space defaults supplied in project source material proved sufficient for very high apparent accuracy (98+%):
 
