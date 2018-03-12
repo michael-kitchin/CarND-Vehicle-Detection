@@ -222,7 +222,7 @@ An early discovery in development was the poor cost/benefit performing channel (
  
 Scales, image subsets, and overlap fraction were derived from project source material, guesswork, and as much experimentation as the project timeline allowed.
 
-In particularly, cars in the mid-vertical and horizontal periphery of the search area proved difficult to detect (e.g., test image #3). Additional scales and fractions were added until there was usable detection improvement at the cost of many window steps and a notable increase in processing time (average ~2.9sec/frame).
+In particular, cars in the mid-vertical and horizontal periphery of the search area proved difficult to detect (e.g., test image #3). Additional scales and fractions were added until there was usable detection improvement at the cost of many window steps and a notable increase in processing time (average ~2.9sec/frame).
 
 The final configuration is as follows:
 
