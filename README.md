@@ -304,7 +304,7 @@ See [Test Video #1](./output_videos/test_video.mp4) for project test video.
 
 _A method, such as requiring that a detection be found at or near the same position in several subsequent frames, (could be a heat map showing the location of repeat detections) is implemented as a means of rejecting false positives, and this demonstrably reduces the number of false positives. Same or similar method used to draw bounding boxes (or circles, cubes, etc.) around high-confidence detections where multiple overlapping detections occur._
 
-Heat map generation and averaging is perfomed in the `process_image` function in the `process.py` script. Averaging is performed in the `RunningMean` class in the `running_mean.py` script, a general-purpose running (windowed) mean mean capability for NumPy arrays.
+Heat map generation and averaging is perfomed in the `process_image` function in the `process.py` script. Averaging is performed in the `RunningMean` class in the `running_mean.py` script, a general-purpose running (windowed) mean capability for NumPy arrays.
 
 Heat maps are used to aggregate high-confidence areas, then are averaged from frame to frame to minimize transient effects (e.g., passing shadows, pavement changes).  
 
