@@ -180,7 +180,7 @@ The following HOG parameter and color space defaults supplied in project source 
 
 Experimentation was performed with (e.g.) alternative color spaces without productive results.
 
-The luminance channel (Y) vs chrominance (Cr, Cb) was observed to be particularly useful for brighter, more-distant detections, as shown:
+The luminance channel (Y) vs chrominance (Cr, Cb) was observed to be particularly useful for brighter, more-distant detections, as shown in test image #3 (detection area outlined):
 
 Hog vs luminance (Y): 
 ![test #3 (Y)](./media/test3_hog_0_4.png)
