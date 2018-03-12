@@ -320,13 +320,13 @@ This coupled with the filtering techniques described in (3.2) minimize false pos
 
 _Discussion includes some consideration of problems/issues faced, what could be improved about their algorithm/pipeline, and what hypothetical cases would cause their pipeline to fail._
 
-This capabiliy requires considerable processing power applied during training and execution to achieve usable detection performance, to the point it may be impractical to implement in applications without commensurate optimization of underling algorithms (e.g., pre-filtering, convolution) and implementations (e.g., re-implementation in lower-level programming systems). 
+This capabiliy requires considerable processing power applied during training and execution to achieve usable detection performance, to the point it may be impractical to implement in applications without commensurate optimization of underling algorithms (e.g., pre-filtering, convolution) and implementations (e.g., lower-level programming systems). 
 
 This prospect suggests a such a capability may not be conveniently and interactively designed (as we have done) to coerce and aggregate this type/fidelity of input into actionable information. 
 
 Other projects in this program illustrate that developers may be better off abstracting this functionality using neural networks, effectively enabling applications to generate optimal processing pipelines (or meaningful portions thereof).
 
-The correct approach comes down to selecting the right tool for the job. In the case of this project, for example processing power/execution time isn't a pressing concern and there are many unexplored input management and processing scope opportunities yet to be considered.
+The correct approach comes down to selecting the right tool for the job. In the case of this project, for example processing power/execution time isn't a pressing concern and there are many unexplored input and scope opportunities yet to be considered.
 
 Either way, scikit-learn, Keras, TensorFlow, and NumPy (to name a few) have been incredible tools to learn and use for these projects and I look forward to leveraging them extensively in the future.
   
