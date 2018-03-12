@@ -259,7 +259,7 @@ Test image #4 (input):
 Test image #4 (detections):
 ![Test image #4](./output_images/by_name/test4/test4_boxes.png)
 
-Test image #4 (HOG luminance (y), scale 4):
+Test image #4 (HOG luminance (Y), scale 4):
 ![Test image #4](./output_images/by_name/test4/test4_hog_0_4.png)
 
 Test image #4 (heat map):
